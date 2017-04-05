@@ -1,0 +1,22 @@
+version: '2'
+services:
+
+  celery:
+    build: .
+    command: celery --app=tasks worker
+    depends_on:
+      - redis-sentinel-cluster
+    environment:
+      C_FORCE_ROOT: "True"
+  python:
+    build: .
+    command: python app.py
+    depends_on:
+      - redis-sentinel-cluster
+    volumes:
+      - ./:/usr/src/app
+    environment:
+      PYTHONDONTWRITEBYTECODE: "True"
+      PYTHONUNBUFFERED: "True"
+  redis-sentinel-cluster:
+    build: ./redis-sentinel-cluster
